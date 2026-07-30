@@ -13,8 +13,4 @@ public class PeticleApplication  {
     public static void main(String[] args) {
         SpringApplication.run(PeticleApplication.class, args);
     }
-    // public void run(String... args) throws Exception {
-    //     // ✅ 서버 시작 시 자동으로 유저 점수 동기화
-    //     pointService.migrateScores();
-    // }
 }

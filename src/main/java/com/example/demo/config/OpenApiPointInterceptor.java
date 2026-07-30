@@ -18,7 +18,7 @@ public class OpenApiPointInterceptor implements HandlerInterceptor {
                              HttpServletResponse response,
                              Object handler) throws Exception {
 
-        // 🚨 open-api로 시작하는 요청만 포인트 지급
+        // open-api로 시작하는 요청만 포인트 지급
         String uri = request.getRequestURI();
         if (uri.startsWith("/api/open/")) {
             // Swagger에서 넘겨준 학번(userId) 헤더로 받기

@@ -1,0 +1,14 @@
+target/
+bin/
+.settings/
+.classpath
+.project
+.idea/
+*.iml
+.vscode/
+.env
+*.env
+application-secret.*
+application-local.*
+*.log
+.DS_Store

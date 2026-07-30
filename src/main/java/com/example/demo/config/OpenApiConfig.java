@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-// 전역 헤더 정의 
+// 전역 헤더 정의
 @SecurityScheme(
         name = "x-user-id",
         type = SecuritySchemeType.APIKEY,
@@ -21,22 +21,8 @@ public class OpenApiConfig {
     @Bean
     public GroupedOpenApi openApiGroup() {
         return GroupedOpenApi.builder()
-                .group("open-api")
-                .packagesToScan("com.example.demo.openapi")
-                .addOpenApiCustomizer(o -> o.info(new Info()
-                        .title("PETicle Open API")
-                        .version("v1")))
-                .build();
-    }
-
-    @Bean
-    public GroupedOpenApi allApiGroup() {
-        return GroupedOpenApi.builder()
                 .group("all-api")
-                .packagesToScan("com.example.demo")
-                .addOpenApiCustomizer(o -> o.info(new Info()
-                        .title("PETicle All API")
-                        .version("v1")))
+                .packagesToScan("com.example.demo") //전체 패키지
                 .build();
     }
 }

@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
 
         // 저장
         userRepository.save(user);
-        System.out.println("✅ 회원가입 완료 → ID: " + user.getUserId());
+        System.out.println("회원가입 완료 → ID: " + user.getUserId());
 
         return "회원가입 성공";
     }
