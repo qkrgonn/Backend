@@ -33,7 +33,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public String registerUser(UserRegisterDto dto) {
-        // 학교 ID 방어
         if (dto.getSchoolId() == null || dto.getSchoolId().trim().isEmpty()) {
             return "학교를 선택해 주세요.";
         }
@@ -45,21 +44,17 @@ public class UserServiceImpl implements UserService {
             return "올바른 학교 ID 형식이 아닙니다.";
         }
 
-        // 비밀번호 확인
         if (!dto.getPassword().equals(dto.getConfirmPassword())) {
             return "비밀번호가 일치하지 않습니다.";
         }
 
-        // 아이디 중복 확인
         if (userRepository.existsByUserId(dto.getUserId())) {
             return "중복된 아이디입니다.";
         }
 
-        // 학교 조회
         SchoolEntity school = schoolRepository.findById(schoolId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 학교가 존재하지 않습니다."));
 
-        // User 생성 (단 하나만)
         User user = new User(
                 dto.getUserId(), // userId
                 dto.getCharName(), // charName
@@ -71,11 +66,10 @@ public class UserServiceImpl implements UserService {
                 LocalDateTime.now(), // registerDate
                 3, // totalLives
                 dto.getStudentNumber(), // studentNumber
-                school // school (방금 조회한 학교)
+                school // school
 , null, null
         );
 
-        // 저장
         userRepository.save(user);
         System.out.println("회원가입 완료 → ID: " + user.getUserId());
 
@@ -84,25 +78,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginResponseDto login(LoginRequestDto dto) {
-        // 아이디로 사용자 찾기
         User user = userRepository.findByUserId(dto.getUserId()).orElse(null);
 
-        // 사용자가 없으면 로그인 실패
         if (user == null) {
             return new LoginResponseDto("아이디가 존재하지 않습니다.", false);
         }
-        // 비밀번호 일치 여부 확인 (BCrypt)
         if (!new BCryptPasswordEncoder().matches(dto.getPassword(), user.getPassword())) {
             return new LoginResponseDto("비밀번호가 일치하지 않습니다.", false);
         }
 
-        // 총 수거량 조회 (PetInputLog 기준), 점수 조회
         int recycleCount = petInputLogRepository.countByUserId(user);
         Integer highestScore = rankingRepository.findHighestScoreByUserId(user);
         if (highestScore == null)
             highestScore = 0;
 
-        // 로그인 성공
         return new LoginResponseDto(
                 "로그인 성공",
                 true,

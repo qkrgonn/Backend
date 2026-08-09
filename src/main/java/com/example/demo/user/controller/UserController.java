@@ -2,7 +2,7 @@ package com.example.demo.user.controller;
 
 import com.example.demo.user.dto.*;
 import com.example.demo.user.service.UserService;
-import com.example.demo.user.service.LifeService; //LifeService 추가
+import com.example.demo.user.service.LifeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,9 +21,8 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
-    private final LifeService lifeService; // LifeService 주입
+    private final LifeService lifeService;
 
-    // 회원가입
     @PostMapping("/register")
     public String registerUser(@RequestBody UserRegisterDto dto) {
         if (dto == null) {
@@ -34,27 +33,23 @@ public class UserController {
         return userService.registerUser(dto);
     }
 
-    // 로그인
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto) {
         log.debug("로그인 요청: userId={}", dto.getUserId());
         return ResponseEntity.ok(userService.login(dto));
     }
 
-    // 랭킹
     @GetMapping("/ranking")
     public ResponseEntity<List<UserRankingDto>> getRanking() {
         return ResponseEntity.ok(userService.getUserRanking());
     }
 
-    // 게임 세션 시작
     @PostMapping("/session/start")
     public ResponseEntity<String> startSession(@RequestBody StartSessionDto dto) {
         userService.startGameSession(dto);
         return ResponseEntity.ok("게임 세션 시작됨");
     }
 
-    // 휴대폰 인증
     @PostMapping("/verify-phone")
     public ResponseEntity<String> verifyPhoneNumber(@RequestBody PhoneVerifyDto dto) {
         String phone = dto.getPhoneNumber();
@@ -64,7 +59,6 @@ public class UserController {
         return ResponseEntity.ok("휴대폰 번호 인증 성공");
     }
 
-    // 아이디 중복 확인
     @PostMapping("/check-id")
     public ResponseEntity<?> checkId(@RequestBody Map<String, String> body) {
         String userId = body.get("userId");
@@ -79,13 +73,11 @@ public class UserController {
         }
     }
 
-    // 현재 하트 조회 
     @GetMapping("/lives")
     public ResponseEntity<Integer> getLives(@RequestParam String userId) {
         return ResponseEntity.ok(lifeService.currentLives(userId));
     }
 
-    // 하트 차감 
     @PostMapping("/lives/consume")
     public ResponseEntity<Integer> consumeLife(@RequestParam String userId) {
         try {

@@ -60,12 +60,6 @@ public class User {
     @Column(name = "score", nullable = false)
     private Integer score = 0;
 
-    /**
-     * 엔티티가 처음 저장될 때 실행되는 콜백
-     * - 비밀번호 암호화
-     * - score 기본값 0
-     * - registerDate 기본값 현재 시간
-     */
     @PrePersist
     public void onCreate() {
         if (this.password != null) {
@@ -75,7 +69,6 @@ public class User {
         if (registerDate == null) registerDate = LocalDateTime.now();
     }
 
-    // 실제 암호화 로직 (예: BCryptPasswordEncoder)
     private String encryptPassword(String password) {
         return new BCryptPasswordEncoder().encode(password);
     }
