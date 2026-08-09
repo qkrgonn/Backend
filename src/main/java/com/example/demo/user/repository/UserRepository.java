@@ -13,10 +13,6 @@ public interface UserRepository extends JpaRepository<User, String> {
     // 로그인: userId로 조회
     Optional<User> findByUserId(String userId);
 
-    // (해시 비밀번호 사용 시 미사용 권장)
-    @Deprecated
-    User findByUserIdAndPassword(String userId, String password);
-
     // 아이디 중복 확인
     boolean existsByUserId(String userId);
 

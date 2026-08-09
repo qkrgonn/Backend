@@ -10,6 +10,7 @@ import com.example.demo.game.repository.RankingRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -90,11 +91,8 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             return new LoginResponseDto("아이디가 존재하지 않습니다.", false);
         }
-        System.out.println("🔐 입력된 비밀번호: [" + dto.getPassword() + "]");
-        System.out.println("🔐 DB의 비밀번호: [" + user.getPassword() + "]");
-        System.out.println("✔️ 일치 여부: " + user.getPassword().equals(dto.getPassword()));
-        // 비밀번호 일치 여부 확인
-        if (!user.getPassword().equals(dto.getPassword())) {
+        // 비밀번호 일치 여부 확인 (BCrypt)
+        if (!new BCryptPasswordEncoder().matches(dto.getPassword(), user.getPassword())) {
             return new LoginResponseDto("비밀번호가 일치하지 않습니다.", false);
         }
 

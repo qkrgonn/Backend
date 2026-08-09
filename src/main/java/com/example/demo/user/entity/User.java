@@ -9,6 +9,7 @@ import com.example.demo.school.entity.SchoolEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Getter
 @Setter
@@ -76,8 +77,7 @@ public class User {
 
     // 실제 암호화 로직 (예: BCryptPasswordEncoder)
     private String encryptPassword(String password) {
-        // TODO: BCrypt 같은 암호화 로직 적용 필요
-        return password; // 현재는 그대로 리턴 (팀원 로직 확인 후 수정)
+        return new BCryptPasswordEncoder().encode(password);
     }
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
