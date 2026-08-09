@@ -79,12 +79,6 @@ public class UserController {
         }
     }
 
-    // 학번 인증 없이 저장
-    @GetMapping("/check-student")
-public ResponseEntity<String> checkStudent(@RequestParam String studentNumber) {
-    return ResponseEntity.ok("재활용을 시작합니다");
-}
-
     // 현재 하트 조회 
     @GetMapping("/lives")
     public ResponseEntity<Integer> getLives(@RequestParam String userId) {
