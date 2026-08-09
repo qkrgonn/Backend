@@ -4,7 +4,6 @@ public class AdminLoginRequestDto {
     private Long adminId;
     private String password;
 
-    // ✅ 기본 생성자
     public AdminLoginRequestDto() {}
     
     public Long getAdminId() {

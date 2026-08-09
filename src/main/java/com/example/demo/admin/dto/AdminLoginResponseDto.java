@@ -12,7 +12,7 @@ public class AdminLoginResponseDto {
     private Long adminId;
     private String adminName;
     private String adminRegion;
-    private List<SchoolEntity> schools;  // ✅ 관리자 지역의 학교 리스트 포함
+    private List<SchoolEntity> schools;
 
     @Builder
     public AdminLoginResponseDto(Long adminId, String adminName, String adminRegion, List<SchoolEntity> schools) {

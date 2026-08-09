@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor   // final 필드 자동 생성자 주입
+@RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
 
     private final AdminRepository adminRepository;
@@ -91,7 +91,6 @@ public class AdminServiceImpl implements AdminService {
                 ));
     }
 
-    // ✅ 알림 기능 (device_check_logs 기반)
     @Override
     public List<DeviceCheckLog> getNotifications(Long adminId) {
         return deviceCheckLogRepository.findByAdminId_AdminIdOrderByLogTimeDesc(adminId);

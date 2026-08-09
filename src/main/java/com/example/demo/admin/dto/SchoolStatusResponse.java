@@ -1,4 +1,3 @@
-// SchoolStatusResponse.java
 package com.example.demo.admin.dto;
 
 import lombok.AllArgsConstructor;

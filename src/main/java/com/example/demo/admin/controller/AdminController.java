@@ -99,14 +99,12 @@ public class AdminController {
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    // 알림 조회 (DeviceCheckLog → DTO 변환)
     @GetMapping("/notifications")
     public ResponseEntity<List<NotificationResponseDto>> getNotifications(@RequestParam Long adminId) {
         System.out.println("🔵 /api/admin/notifications 호출됨, adminId=" + adminId);
 
         List<DeviceCheckLog> logs = adminService.getNotifications(adminId);
 
-        // DeviceCheckLog → NotificationResponseDto 변환
         List<NotificationResponseDto> response = logs.stream().map(log -> {
                 String schoolName = log.getDeviceId().getSchool() != null 
                         ? log.getDeviceId().getSchool().getSchoolName() 

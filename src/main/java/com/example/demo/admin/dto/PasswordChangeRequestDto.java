@@ -1,7 +1,7 @@
 package com.example.demo.admin.dto;
 
 public class PasswordChangeRequestDto {
-    private Long adminId;  // ✅ 추가!
+    private Long adminId;
     private String currentPassword;
     private String newPassword;
 

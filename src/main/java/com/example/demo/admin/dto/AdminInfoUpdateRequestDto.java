@@ -1,9 +1,9 @@
 package com.example.demo.admin.dto;
 
 public class AdminInfoUpdateRequestDto {
-    private Long adminId;       // 관리자 번호
-    private String region;      // 담당 지역
-    private String name;        // 관리자 이름
+    private Long adminId;
+    private String region;
+    private String name;
 
     public AdminInfoUpdateRequestDto() {}
 

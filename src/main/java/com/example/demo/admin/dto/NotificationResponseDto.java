@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NotificationResponseDto {
-    private Long logId;       // 로그 PK
-    private String adminName; // 관리자 이름
-    private String actionType; 
+    private Long logId;
+    private String adminName;
+    private String actionType;
     private LocalDateTime logTime;
-    private Long deviceId;    // 디바이스 PK
-    private String schoolName; // 학교이름
+    private Long deviceId;
+    private String schoolName;
 }

@@ -19,9 +19,7 @@ public interface AdminService {
 
     void updateAdminInfo(AdminInfoUpdateRequestDto dto);
 
-    // ✅ 관리자 정보 조회
     Optional<AdminInfoResponseDto> getAdminInfo(Long adminId);
 
-    // ✅ 알림 (device_check_logs 기반)
     List<DeviceCheckLog> getNotifications(Long adminId);
 }
