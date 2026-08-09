@@ -35,6 +35,6 @@ public class OpenApiPointInterceptor implements HandlerInterceptor {
             }
         }
 
-        return true; // 계속 진행
+        return true;
     }
 }

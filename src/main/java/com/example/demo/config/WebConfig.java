@@ -1,4 +1,3 @@
-// src/main/java/com/example/demo/config/WebConfig.java
 package com.example.demo.config;
 
 import lombok.RequiredArgsConstructor;
@@ -15,6 +14,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(interceptor)
-                .addPathPatterns("/api/open/v1/**"); // Open API 전체에 적용
+                .addPathPatterns("/api/open/v1/**");
     }
 }

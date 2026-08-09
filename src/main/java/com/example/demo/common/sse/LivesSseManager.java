@@ -1,4 +1,3 @@
-// src/main/java/com/example/demo/common/sse/LivesSseManager.java
 package com.example.demo.common.sse;
 
 import org.springframework.stereotype.Component;
@@ -15,7 +14,6 @@ public class LivesSseManager {
         SseEmitter emitter = new SseEmitter(0L);
         emitters.computeIfAbsent(userId, k -> new CopyOnWriteArrayList<>()).add(emitter);
         
-        // 확인용
         System.out.println("✅ SSE 구독 시작: userId=" + userId);
 
         emitter.onCompletion(() -> remove(userId, emitter));
@@ -36,7 +34,6 @@ public class LivesSseManager {
         list.removeAll(dead);
     }
 
-    /** ✅ 포인트 지급 이벤트 전송 */
     public void publishPoints(String userId, Object payload) {
         var list = emitters.getOrDefault(userId, new CopyOnWriteArrayList<>());
         System.out.println("📤 points 전송 시도: userId=" + userId + " 구독자수=" + list.size()

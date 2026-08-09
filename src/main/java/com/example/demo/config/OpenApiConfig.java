@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-// 전역 헤더 정의
 @SecurityScheme(
         name = "x-user-id",
         type = SecuritySchemeType.APIKEY,
@@ -22,7 +21,7 @@ public class OpenApiConfig {
     public GroupedOpenApi openApiGroup() {
         return GroupedOpenApi.builder()
                 .group("all-api")
-                .packagesToScan("com.example.demo") //전체 패키지
+                .packagesToScan("com.example.demo")
                 .build();
     }
 }
