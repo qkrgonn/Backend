@@ -1,4 +1,3 @@
-// src/main/java/com/example/demo/openapi/controller/OpenSchoolController.java
 package com.example.demo.openapi.controller;
 
 import com.example.demo.openapi.dto.SchoolSimpleDto;
@@ -12,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;   // ✅ 추가
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,4 +1,3 @@
-// src/main/java/com/example/demo/openapi/controller/OpenPetInputController.java
 package com.example.demo.openapi.controller;
 
 import com.example.demo.game.service.PointService;
@@ -12,7 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;   // ✅ 추가
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 

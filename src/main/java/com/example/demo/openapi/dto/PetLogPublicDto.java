@@ -1,4 +1,3 @@
-// src/main/java/com/example/demo/openapi/dto/PetLogPublicDto.java
 package com.example.demo.openapi.dto;
 
 import java.time.LocalDateTime;

@@ -1,4 +1,3 @@
-// src/main/java/com/example/demo/openapi/service/OpenPetInputService.java
 package com.example.demo.openapi.service;
 
 import com.example.demo.device.entity.PetInputLog;
@@ -26,11 +25,7 @@ public class OpenPetInputService {
     }
 
     public TotalCountDto getSchoolTotal(Long schoolId) {
-        // 레포 메서드명이 getTotalCountBySchool 인지 getTotalCountBySchoolId 인지 확인!
-        Long total = toLong(
-            repo.getTotalCountBySchoolId(schoolId)   // ← 이 이름이 맞으면 그대로
-            // repo.getTotalCountBySchool(schoolId)  // ← 레포가 이렇게 되어 있으면 이 줄로 교체
-        );
+        Long total = toLong(repo.getTotalCountBySchoolId(schoolId));
         return new TotalCountDto(schoolId, total);
     }
 
