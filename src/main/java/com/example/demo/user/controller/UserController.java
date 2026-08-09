@@ -4,6 +4,7 @@ import com.example.demo.user.dto.*;
 import com.example.demo.user.service.UserService;
 import com.example.demo.user.service.LifeService; //LifeService 추가
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -25,17 +27,17 @@ public class UserController {
     @PostMapping("/register")
     public String registerUser(@RequestBody UserRegisterDto dto) {
         if (dto == null) {
-            System.out.println("DTO가 null입니다!");
+            log.warn("회원가입 요청 DTO가 null");
             return "입력된 데이터가 잘못되었습니다.";
         }
-        System.out.println("DTO 확인: " + dto.toString());
+        log.info("회원가입 요청 수신: userId={}", dto.getUserId());
         return userService.registerUser(dto);
     }
 
     // 로그인
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto) {
-        System.out.println("Controller 진입");
+        log.debug("로그인 요청: userId={}", dto.getUserId());
         return ResponseEntity.ok(userService.login(dto));
     }
 
