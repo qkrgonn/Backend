@@ -23,9 +23,8 @@ public class ScoreLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** 점수 수령자 (User 엔티티와 관계) */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false) // FK로 매핑
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     /** 지급 출처: game / openapi / login / etc */
@@ -40,7 +39,6 @@ public class ScoreLog {
     @Column(name = "score_given", nullable = false)
     private Integer scoreGiven;
 
-    /** 지급 시각 */
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

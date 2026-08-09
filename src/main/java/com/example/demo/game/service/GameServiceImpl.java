@@ -42,7 +42,6 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public GameResultResponseDto processGameResult(GameResultRequestDto dto) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'processGameResult'");
     }
 }

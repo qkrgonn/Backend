@@ -22,7 +22,6 @@ public class ScoreService {
                 .orElseGet(() -> userRepository.save(User.builder()
                         .userId(userId).score(0).build()));
 
-        // 로그 기록
         scoreLogRepository.save(ScoreLog.builder()
                 .user(user)
                 .source(source)
@@ -30,7 +29,6 @@ public class ScoreService {
                 .scoreGiven(delta)
                 .build());
 
-        // 누적 점수 업데이트
         user.setScore(user.getScore() + delta);
     }
 }

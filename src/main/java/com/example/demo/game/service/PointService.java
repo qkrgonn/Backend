@@ -34,17 +34,14 @@ public class PointService {
         LocalDateTime start = today.atStartOfDay();
         LocalDateTime end = start.plusDays(1);
 
-        // User 엔티티 조회
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
 
-        // 오늘 호출한 로그 확인
         List<ScoreLog> todayLogs = scoreLogRepository.findByUserAndCreatedAtBetween(user, start, end);
         if (todayLogs.size() >= 3) {
             return 0; // 이미 3회 다 사용했으면 포인트 지급 안 함
         }
 
-        // 호출 횟수에 따른 점수
         int points = switch (todayLogs.size()) {
             case 0 -> 100; // 1회차
             case 1 -> 130; // 2회차
@@ -60,13 +57,11 @@ public class PointService {
                 .build();
         scoreLogRepository.save(log);
 
-        // ✅ User.score 총점 DB에 누적
         int updated = userRepository.addScore(userId, points);
         if (updated == 0) {
             throw new IllegalStateException("Score update failed for uid=" + userId);
         }
 
-        // ✅ 포인트 지급 후 SSE 알림 전송
         System.out.println("✅ publishPoints 호출됨: " + userId + ", +" + points);
         try {
             int newTotal = user.getScore() + points; // 간단 계산(정확히 하려면 재조회)
@@ -76,7 +71,7 @@ public class PointService {
             System.out.println("❌ SSE 호출 중 예외: " + e.getMessage());
         }
 
-        return points; // ✅ 이번에 지급된 포인트 반환
+        return points;
     }
     public void migrateScores() {
     int updated = userRepository.syncUserScores();
