@@ -1,7 +1,6 @@
 package com.example.demo.user.controller;
 
 import com.example.demo.user.dto.*;
-import com.example.demo.user.repository.UserRepository;
 import com.example.demo.user.service.UserService;
 import com.example.demo.user.service.LifeService; //LifeService 추가
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,6 @@ import java.util.Map;
 @CrossOrigin(origins = "*") // 개발 중 CORS 허용 (배포 시 도메인 제한)
 public class UserController {
 
-    private final UserRepository userRepository;
     private final UserService userService;
     private final LifeService lifeService; // LifeService 주입
 
