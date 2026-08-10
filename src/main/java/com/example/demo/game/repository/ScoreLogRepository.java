@@ -11,7 +11,6 @@ import java.util.List;
 
 public interface ScoreLogRepository extends JpaRepository<ScoreLog, Long> {
 
-    // 오늘 호출 횟수 체크 (범위 기반)
     long countByUser_UserIdAndSourceAndCreatedAtBetween(
             String userId,
             String source,
@@ -19,14 +18,12 @@ public interface ScoreLogRepository extends JpaRepository<ScoreLog, Long> {
             LocalDateTime end
     );
 
-    // User + 날짜 범위
     List<ScoreLog> findByUserAndCreatedAtBetween(
         User user,
         LocalDateTime start,
         LocalDateTime end
     );
 
-    // UserId + 날짜 범위
     @Query("""
            select s 
              from ScoreLog s
@@ -39,7 +36,6 @@ public interface ScoreLogRepository extends JpaRepository<ScoreLog, Long> {
             LocalDateTime end
     );
 
-    // 총점 계산
     @Query("select coalesce(sum(s.scoreGiven), 0) " +
            "from ScoreLog s " +
            "where s.user.userId = :userId")

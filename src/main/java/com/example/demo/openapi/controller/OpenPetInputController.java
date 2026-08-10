@@ -32,8 +32,8 @@ public class OpenPetInputController {
     private final UserRepository userRepository;
 
 
-    // ✅ 하나로 통합: from 없으면 전체, 있으면 해당 시점부터 합계
-    // ✅ format=plain 지원(숫자만)
+    // from이 없으면 전체, 있으면 해당 시점부터 합계
+    // format=plain은 숫자만 응답
     @GetMapping("/users/{userId}/total-count")
     public ResponseEntity<?> getUserTotal(
             @PathVariable String userId,
@@ -41,15 +41,15 @@ public class OpenPetInputController {
             @RequestParam(defaultValue = "json") String format      // json | plain
     ) {
         TotalCountDto dto = (from == null || from.isBlank())
-                ? svc.getUserTotal(userId)                          // 전체 총합
-                : svc.getUserTotalFromDate(userId, parseFlexible(from)); // 기준일시부터 합계
+                ? svc.getUserTotal(userId)
+                : svc.getUserTotalFromDate(userId, parseFlexible(from));
 
         if ("plain".equalsIgnoreCase(format)) {
             return ResponseEntity.ok()
                     .header("Content-Type", "text/plain; charset=UTF-8")
-                    .body(String.valueOf(dto.totalCount()));     // 숫자만
+                    .body(String.valueOf(dto.totalCount()));
         }
-        return ResponseEntity.ok(dto);                              // 기본 JSON
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/schools/{schoolId}/total-count")
@@ -85,7 +85,7 @@ public class OpenPetInputController {
         return svc.getDailyStatsBySchool(schoolId);
     }
 
-    // ✅ 학생 랭킹: format=csv 지원(앱인벤터에서 CSV 파싱하기 쉬움)
+    // format=csv는 앱인벤터에서 파싱하기 쉽게 제공한다.
     @GetMapping("/schools/{schoolId}/students-ranking")
     public ResponseEntity<?> ranking(@PathVariable Long schoolId,
                                      @RequestParam(defaultValue = "json") String format // json | csv
@@ -103,19 +103,17 @@ public class OpenPetInputController {
                     .header("Content-Type", "text/csv; charset=UTF-8")
                     .body(sb.toString());
         }
-        return ResponseEntity.ok(list); // 기본 JSON
+        return ResponseEntity.ok(list);
     }
 
-    // ---- 내부 유틸: 날짜/날짜시간 모두 허용 ----
     private LocalDateTime parseFlexible(String s) {
         try {
-            return LocalDateTime.parse(s);          // yyyy-MM-ddTHH:mm:ss
+            return LocalDateTime.parse(s);
         } catch (Exception ignore) {
-            return LocalDate.parse(s).atStartOfDay(); // yyyy-MM-dd
+            return LocalDate.parse(s).atStartOfDay();
         }
     }
 
-    // ---- CSV 특수문자 이스케이프(콤마, 따옴표, 개행) ----
     private static String escapeCsv(String s) {
         if (s == null) return "";
         boolean needQuote = s.contains(",") || s.contains("\"") || s.contains("\n") || s.contains("\r");

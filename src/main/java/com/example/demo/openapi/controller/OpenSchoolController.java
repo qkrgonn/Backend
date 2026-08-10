@@ -53,7 +53,7 @@ public class OpenSchoolController {
 
         if ("csv".equalsIgnoreCase(format)) {
             StringBuilder sb = new StringBuilder();
-            sb.append("id,name\n");                 // 헤더: id, name 만
+            sb.append("id,name\n");
         for (SchoolSimpleDto s : list) {
             sb.append(s.getId()).append(",")
               .append(escapeCsv(s.getName())).append("\n");
@@ -63,10 +63,9 @@ public class OpenSchoolController {
                 .body(sb.toString());
     }
 
-    return ResponseEntity.ok(list);             // 기본은 JSON
+    return ResponseEntity.ok(list);
 }
 
-// CSV 특수문자 처리
 private static String escapeCsv(String s) {
     if (s == null) return "";
     boolean needQuote = s.contains(",") || s.contains("\"") || s.contains("\n") || s.contains("\r");

@@ -39,7 +39,7 @@ public class PetInputLog {
     private Device device;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable =true)//false
+    @JoinColumn(name = "user_id", nullable =true)
     private User userId;
 
     @Column(name = "student_number", length = 20, nullable = true)

@@ -10,26 +10,22 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, String> {
 
-    // 로그인: userId로 조회
     Optional<User> findByUserId(String userId);
 
-    // 아이디 중복 확인
     boolean existsByUserId(String userId);
 
-    // 학번으로 사용자 조회
     Optional<User> findByStudentNumber(String studentNumber);
 
-    // ✅ 하트가 1개 이상일 때만 1 감소 (동시 클릭에도 음수 방지)
+    // 하트가 1개 이상일 때만 1 감소해 동시 클릭에도 음수를 방지한다.
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("UPDATE User u SET u.totalLives = u.totalLives - 1 " +
            "WHERE u.userId = :userId AND u.totalLives > 0")
     int consumeOneLife(@Param("userId") String userId);
 
-    // ✅ 현재 하트 수 조회
     @Query("SELECT u.totalLives FROM User u WHERE u.userId = :userId")
     Integer getLives(@Param("userId") String userId);
 
-    // ✅ 점수 누적 (OpenAPI 호출 시 사용)
+    // OpenAPI 호출에 따른 점수를 누적한다.
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""
            update User u
@@ -38,7 +34,7 @@ public interface UserRepository extends JpaRepository<User, String> {
            """)
     int addScore(@Param("userId") String userId, @Param("points") int points);
 
-    // ✅ 기존 score_log 합계를 user.score에 반영 (동기화)
+    // score_log 합계를 user.score에 동기화한다.
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""
            update User u

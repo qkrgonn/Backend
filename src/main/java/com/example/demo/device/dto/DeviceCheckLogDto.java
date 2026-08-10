@@ -10,12 +10,11 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class DeviceCheckLogDto {
-    private Long adminId;        // 관리자 번호
-    private String admName;      // 관리자 이름
-    private String actionType;   // 작업 타입 (수거/점검/수리 등)
-    private LocalDateTime logTime; // 날짜
+    private Long adminId;
+    private String admName;
+    private String actionType;
+    private LocalDateTime logTime;
 
-    // JPQL new 생성자용
     public DeviceCheckLogDto(Long adminId, String admName, String actionType, LocalDateTime logTime) {
         this.adminId = adminId;
         this.admName = admName;

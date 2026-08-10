@@ -1,4 +1,3 @@
-// src/main/java/com/example/demo/user/dto/LivesDto.java
 package com.example.demo.user.dto;
 
 import java.time.LocalDateTime;

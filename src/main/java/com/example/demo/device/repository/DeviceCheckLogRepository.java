@@ -24,6 +24,5 @@ public interface DeviceCheckLogRepository extends JpaRepository<DeviceCheckLog, 
             @Param("yearMonth") String yearMonth
     );
 
-    // ✅ 관리자별 전체 알림 조회
     List<DeviceCheckLog> findByAdminId_AdminIdOrderByLogTimeDesc(Long adminId);
 }

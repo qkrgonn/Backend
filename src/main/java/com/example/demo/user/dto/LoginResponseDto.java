@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginResponseDto {
-    private String message; // 로그인 메시지
-    private boolean success; // 로그인 성공 여부
+    private String message;
+    private boolean success;
 
     private String userId;
     private String characterName;
@@ -21,7 +21,6 @@ public class LoginResponseDto {
     this.message = message;
     this.success = success;
     }
-    // Getter and Setter
     public String getMessage() {
         return message;
     }
