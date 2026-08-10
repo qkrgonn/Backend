@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api/device-logs") // ✅ 공통 prefix 지정
+@RequestMapping("/api/device-logs") // 공통 prefix 지정
 @RequiredArgsConstructor
 public class DeviceCheckLogController {
 
