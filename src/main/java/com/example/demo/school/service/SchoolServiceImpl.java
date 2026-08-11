@@ -6,6 +6,7 @@ import com.example.demo.school.entity.SchoolEntity;
 import com.example.demo.school.repository.SchoolRepository;
 import com.example.demo.school.repository.SchoolStudentRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -16,6 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class SchoolServiceImpl implements SchoolService {
 
@@ -84,9 +86,7 @@ public class SchoolServiceImpl implements SchoolService {
                         entity.setSchoolName(name);
                         entity.setAddress(address);
                         schoolRepository.save(entity);
-                        System.out.println("✅ 새로 저장됨: " + name);
-                    } else {
-                        System.out.println("⚠️ 이미 존재함: " + name);
+                        log.debug("학교 정보를 저장했습니다.");
                     }
 
                     result.add(new SchoolSearchResponseDto(entity.getId(), name, address));
@@ -99,7 +99,7 @@ public class SchoolServiceImpl implements SchoolService {
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("교육부 학교 API 조회에 실패했습니다.", e);
                 hasMore = false;
             }
         }

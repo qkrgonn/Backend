@@ -5,6 +5,7 @@ import com.example.demo.device.dto.DeviceStatusResponse;
 import com.example.demo.device.entity.Device;
 import com.example.demo.device.repository.DeviceRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController
+@Slf4j
 @RequestMapping("/api/devices")
 @RequiredArgsConstructor
 public class DeviceController {
@@ -68,7 +70,7 @@ public class DeviceController {
         deviceRepository.save(device);
 
         // TODO: 필요 시 로그 테이블에도 저장 가능 (ex: device_check_logs)
-        System.out.println("✅ 수거 완료: deviceId=" + deviceId + ", adminId=" + adminId);
+        log.info("기기 적재율 초기화를 완료했습니다.");
 
         return ResponseEntity.ok("Load rate reset to 0%");
     }

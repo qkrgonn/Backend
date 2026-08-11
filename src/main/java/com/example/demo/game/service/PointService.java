@@ -10,6 +10,7 @@ import com.example.demo.user.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PointService {
 
@@ -50,31 +52,30 @@ public class PointService {
         };
 
         // ScoreLog 저장 (히스토리 남김)
-        ScoreLog log = ScoreLog.builder()
+        ScoreLog scoreLog = ScoreLog.builder()
                 .user(user)
                 .source("OPEN_API:" + uri)
                 .scoreGiven(points)
                 .build();
-        scoreLogRepository.save(log);
+        scoreLogRepository.save(scoreLog);
 
         int updated = userRepository.addScore(userId, points);
         if (updated == 0) {
             throw new IllegalStateException("Score update failed for uid=" + userId);
         }
 
-        System.out.println("✅ publishPoints 호출됨: " + userId + ", +" + points);
         try {
             int newTotal = user.getScore() + points; // 간단 계산(정확히 하려면 재조회)
             livesSseManager.publishPoints(userId, new PointEventDto(points, newTotal));
-            System.out.println("✅ SSE 호출 완료");
+            log.debug("Open API 포인트 SSE 전송을 완료했습니다. points={}", points);
         } catch (Exception e) {
-            System.out.println("❌ SSE 호출 중 예외: " + e.getMessage());
+            log.warn("Open API 포인트 SSE 전송에 실패했습니다.", e);
         }
 
         return points;
     }
     public void migrateScores() {
     int updated = userRepository.syncUserScores();
-    System.out.println("✅ User.score 동기화 완료. 업데이트된 유저 수 = " + updated);
+    log.info("사용자 점수 동기화를 완료했습니다. updatedCount={}", updated);
 }
 }

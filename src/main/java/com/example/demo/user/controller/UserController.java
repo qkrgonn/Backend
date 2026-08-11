@@ -29,13 +29,13 @@ public class UserController {
             log.warn("회원가입 요청 DTO가 null");
             return "입력된 데이터가 잘못되었습니다.";
         }
-        log.info("회원가입 요청 수신: userId={}", dto.getUserId());
+        log.info("회원가입 요청을 수신했습니다.");
         return userService.registerUser(dto);
     }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto) {
-        log.debug("로그인 요청: userId={}", dto.getUserId());
+        log.debug("로그인 요청을 수신했습니다.");
         return ResponseEntity.ok(userService.login(dto));
     }
 

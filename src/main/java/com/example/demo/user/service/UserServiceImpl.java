@@ -9,6 +9,7 @@ import com.example.demo.device.repository.*;
 import com.example.demo.game.repository.RankingRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
@@ -71,7 +73,7 @@ public class UserServiceImpl implements UserService {
         );
 
         userRepository.save(user);
-        System.out.println("회원가입 완료 → ID: " + user.getUserId());
+        log.info("회원가입을 완료했습니다.");
 
         return "회원가입 성공";
     }

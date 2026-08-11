@@ -1,5 +1,6 @@
 package com.example.demo.common.sse;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
@@ -7,6 +8,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 @Component
+@Slf4j
 public class LivesSseManager {
     private final Map<String, CopyOnWriteArrayList<SseEmitter>> emitters = new ConcurrentHashMap<>();
 
@@ -14,7 +16,7 @@ public class LivesSseManager {
         SseEmitter emitter = new SseEmitter(0L);
         emitters.computeIfAbsent(userId, k -> new CopyOnWriteArrayList<>()).add(emitter);
         
-        System.out.println("✅ SSE 구독 시작: userId=" + userId);
+        log.debug("SSE 구독을 등록했습니다.");
 
         emitter.onCompletion(() -> remove(userId, emitter));
         emitter.onTimeout(() -> remove(userId, emitter));
@@ -36,8 +38,7 @@ public class LivesSseManager {
 
     public void publishPoints(String userId, Object payload) {
         var list = emitters.getOrDefault(userId, new CopyOnWriteArrayList<>());
-        System.out.println("📤 points 전송 시도: userId=" + userId + " 구독자수=" + list.size()
-            + " payload=" + payload);
+        log.debug("포인트 SSE 전송을 시작합니다. subscriberCount={}", list.size());
 
         var dead = new ArrayList<SseEmitter>();
         for (SseEmitter s : list) {
@@ -47,9 +48,8 @@ public class LivesSseManager {
                 // ② 폴백: 기본 이벤트(message)도 같이 전송 (iOS/Expo Go 호환)
                 s.send(payload);
                 s.send(SseEmitter.event().name("points").data(payload));
-                System.out.println("✅ points 전송 성공 → " + userId);
             } catch (Exception e) {
-                System.out.println("❌ points 전송 실패 → " + userId + " err=" + e.getMessage());
+                log.warn("포인트 SSE 전송에 실패했습니다.", e);
                 dead.add(s);
             }
         }
@@ -62,5 +62,3 @@ public class LivesSseManager {
         if (list != null) list.remove(emitter);
     }
 }
-
-

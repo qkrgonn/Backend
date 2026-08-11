@@ -14,6 +14,7 @@ import com.example.demo.device.repository.DeviceRepository;
 import com.example.demo.school.entity.SchoolEntity;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/admin")
 public class AdminController {
 
@@ -35,7 +37,7 @@ public class AdminController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AdminLoginRequestDto dto) {
-        System.out.println("🔵 [요청 도착] 로그인 시도: " + dto.getAdminId() + ", " + dto.getPassword());
+        log.info("관리자 로그인 요청을 수신했습니다.");
 
         AdminLoginResponseDto result = adminService.login(dto);
         if (result != null) {
@@ -101,17 +103,11 @@ public class AdminController {
 
     @GetMapping("/notifications")
     public ResponseEntity<List<NotificationResponseDto>> getNotifications(@RequestParam Long adminId) {
-        System.out.println("🔵 /api/admin/notifications 호출됨, adminId=" + adminId);
+        log.debug("관리자 알림 조회 요청을 수신했습니다.");
 
         List<DeviceCheckLog> logs = adminService.getNotifications(adminId);
 
         List<NotificationResponseDto> response = logs.stream().map(log -> {
-                String schoolName = log.getDeviceId().getSchool() != null 
-                        ? log.getDeviceId().getSchool().getSchoolName() 
-                        : "null";
-
-                System.out.println("📌 DTO 변환 schoolName=" + log.getDeviceId().getSchool().getSchoolName());
-
             return new NotificationResponseDto(
                 log.getCheckLogId(),
                 log.getAdminId().getAdmName(),

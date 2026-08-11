@@ -4,10 +4,12 @@ import com.example.demo.game.service.PointService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class OpenApiPointInterceptor implements HandlerInterceptor {
 
@@ -28,10 +30,10 @@ public class OpenApiPointInterceptor implements HandlerInterceptor {
                 try {
                     pointService.addPointForApiCall(userId, uri);
                 } catch (Exception e) {
-                    System.err.println("[OpenApiPointInterceptor] 포인트 적립 실패: " + e.getMessage());
+                    log.error("Open API 포인트 적립에 실패했습니다.", e);
                 }
             } else {
-                System.out.println("[OpenApiPointInterceptor] x-user-id 헤더 없음 → 포인트 적립 안 함");
+                log.debug("사용자 식별 헤더가 없어 Open API 포인트를 적립하지 않았습니다.");
             }
         }
 

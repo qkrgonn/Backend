@@ -12,6 +12,7 @@ import com.example.demo.user.entity.User;
 import com.example.demo.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PetInputLogService {
 
@@ -89,7 +91,7 @@ public class PetInputLogService {
         List<PetInputLog> logs = petInputLogRepository.findTop50ByUserId_UserIdOrderByInputTimeDesc(userId);
 
         long end = System.currentTimeMillis();
-        System.out.println("⏱ 로그 조회 쿼리 시간: " + (end - start) + "ms");
+        log.debug("사용자 투입 로그 조회를 완료했습니다. durationMs={}", end - start);
 
         return logs.stream().map(log -> {
             PetInputLogDto dto = new PetInputLogDto();
