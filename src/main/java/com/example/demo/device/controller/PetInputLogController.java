@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
 import com.example.demo.device.dto.PetInputLogDto;
+import com.example.demo.device.dto.PetInputResult;
 import com.example.demo.device.service.PetInputLogService;
 
 @CrossOrigin(origins = "*")
@@ -19,13 +20,14 @@ public class PetInputLogController {
     private final PetInputLogService petInputLogService;
 
     @PostMapping("/input")
-    public ResponseEntity<String> inputPet(@RequestBody PetInputLogDto dto) {
-        String result = petInputLogService.saveInputLog(dto);
-
-        if ("success".equals(result)) {
-            return ResponseEntity.ok("입력 로그 저장 성공");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+    public ResponseEntity<?> inputPet(@RequestBody PetInputLogDto dto) {
+        try {
+            PetInputResult result = petInputLogService.saveInputLog(dto);
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
 

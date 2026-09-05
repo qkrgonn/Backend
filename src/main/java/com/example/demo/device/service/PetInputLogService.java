@@ -1,11 +1,12 @@
 package com.example.demo.device.service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.common.sse.LivesSseManager;
 import com.example.demo.user.dto.LivesDto;
 import com.example.demo.device.dto.PetInputLogDto;
+import com.example.demo.device.dto.PetInputResult;
 import com.example.demo.device.entity.Device;
 import com.example.demo.device.entity.PetInputLog;
+import com.example.demo.device.event.LivesUpdatedEvent;
 import com.example.demo.device.repository.DeviceRepository;
 import com.example.demo.device.repository.PetInputLogRepository;
 import com.example.demo.user.entity.User;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,10 +31,12 @@ public class PetInputLogService {
     private final DeviceRepository deviceRepository;
     private final PetInputLogRepository petInputLogRepository;
 
-    private final LivesSseManager sse;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
-    public String saveInputLog(PetInputLogDto dto) {
+    public PetInputResult saveInputLog(PetInputLogDto dto) {
+        validate(dto);
+
         // user는 찾되, 없어도 그냥 null 허용
         User user = null;
         if (dto.getStudentNumber() != null && !dto.getStudentNumber().isBlank()) {
@@ -41,47 +45,85 @@ public class PetInputLogService {
 
         Device device = deviceRepository.findById(dto.getDeviceId()).orElse(null);
         if (device == null) {
-            return "등록되지 않은 디바이스입니다";
-        }
-
-        if (dto.getInputCount() <= 0) {
-            return "정상 PET이 아니므로 저장하지 않음";
+            throw new IllegalArgumentException("등록되지 않은 디바이스입니다");
         }
 
         var school = device.getSchool();
+        LocalDateTime inputTime = dto.getInputTime() != null ? dto.getInputTime() : LocalDateTime.now();
+        String userId = user != null ? user.getUserId() : null;
 
-        PetInputLog log = PetInputLog.builder()
-                .userId(user)
-                .school(school)
-                .device(device)
-                .studentNumber(dto.getStudentNumber())
-                .inputCount(dto.getInputCount())
-                .inputTime(dto.getInputTime() != null ? dto.getInputTime() : LocalDateTime.now())
-                .build();
+        int inserted = petInputLogRepository.insertIfAbsent(
+                dto.getEventId(),
+                dto.getInputCount(),
+                inputTime,
+                school.getId(),
+                device.getDeviceId(),
+                userId,
+                dto.getStudentNumber());
 
-        petInputLogRepository.save(log);
+        if (inserted == 0) {
+            PetInputLog existing = petInputLogRepository
+                    .findByDevice_DeviceIdAndEventId(dto.getDeviceId(), dto.getEventId())
+                    .orElseThrow(() -> new IllegalStateException("중복 이벤트 조회에 실패했습니다"));
+            ensureSameEvent(existing, dto);
+            return new PetInputResult(dto.getEventId(), "ALREADY_PROCESSED", 0,
+                    userId != null ? userRepository.getLives(userId) : null,
+                    userId != null ? safeTotal(userId) : null);
+        }
 
         if (user != null) {
-            int currentLives = user.getTotalLives();
-            user.setTotalLives(currentLives + dto.getInputCount());
-            userRepository.save(user);
+            int updated = userRepository.addLives(user.getUserId(), dto.getInputCount());
+            if (updated != 1) {
+                throw new IllegalStateException("사용자 적립 갱신에 실패했습니다");
+            }
 
-            // 누적 투입량 합계 (SUM이 null일 수 있어 0 보정)
-            Integer total = petInputLogRepository.getTotalCountByUserId(user.getUserId());
-            int totalRecycleCount = (total != null) ? total : 0;
+            int currentLives = userRepository.getLives(user.getUserId());
+            int totalRecycleCount = safeTotal(user.getUserId());
 
-            // SSE로 실시간 푸시 (userId는 String 기준)
-            sse.publishLives(
+            // 리스너가 DB 커밋에 성공한 뒤에만 SSE를 전송한다.
+            eventPublisher.publishEvent(new LivesUpdatedEvent(
                 user.getUserId(),
                 new LivesDto(
                     user.getUserId(),
-                    user.getTotalLives(),
+                    currentLives,
                     totalRecycleCount,
                     LocalDateTime.now(),
                     dto.getInputCount() )
-            );
+            ));
+
+            return new PetInputResult(dto.getEventId(), "PROCESSED", dto.getInputCount(),
+                    currentLives, totalRecycleCount);
         }
-        return "success";
+
+        return new PetInputResult(dto.getEventId(), "PROCESSED", 0, null, null);
+    }
+
+    private void validate(PetInputLogDto dto) {
+        if (dto.getEventId() == null || dto.getEventId().isBlank() || dto.getEventId().length() > 80) {
+            throw new IllegalArgumentException("eventId는 1~80자의 필수 값입니다");
+        }
+        if (dto.getDeviceId() == null) {
+            throw new IllegalArgumentException("deviceId는 필수 값입니다");
+        }
+        if (dto.getInputCount() <= 0) {
+            throw new IllegalArgumentException("정상 PET이 아니므로 저장하지 않음");
+        }
+        if (dto.getStudentNumber() != null && dto.getStudentNumber().length() > 20) {
+            throw new IllegalArgumentException("studentNumber는 최대 20자입니다");
+        }
+    }
+
+    private void ensureSameEvent(PetInputLog existing, PetInputLogDto dto) {
+        String existingStudentNumber = existing.getStudentNumber();
+        boolean sameStudent = java.util.Objects.equals(existingStudentNumber, dto.getStudentNumber());
+        if (!sameStudent || existing.getInputCount() != dto.getInputCount()) {
+            throw new IllegalStateException("같은 eventId에 서로 다른 적립 데이터가 전달되었습니다");
+        }
+    }
+
+    private int safeTotal(String userId) {
+        Integer total = petInputLogRepository.getTotalCountByUserId(userId);
+        return total != null ? total : 0;
     }
 
     public List<PetInputLogDto> getLogsByUserId(String userId) {
@@ -95,7 +137,8 @@ public class PetInputLogService {
 
         return logs.stream().map(log -> {
             PetInputLogDto dto = new PetInputLogDto();
-            dto.setUserId(log.getUserId().getUserId());
+            dto.setEventId(log.getEventId());
+            dto.setUserId(log.getUserId() != null ? log.getUserId().getUserId() : null);
             dto.setDeviceId(log.getDevice().getDeviceId());
             dto.setInputCount(log.getInputCount());
             dto.setInputTime(log.getInputTime());

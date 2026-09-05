@@ -25,6 +25,12 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query("SELECT u.totalLives FROM User u WHERE u.userId = :userId")
     Integer getLives(@Param("userId") String userId);
 
+    // DB에서 직접 증가시켜 동시에 여러 병이 적립되어도 lost update를 방지한다.
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("UPDATE User u SET u.totalLives = u.totalLives + :count " +
+           "WHERE u.userId = :userId")
+    int addLives(@Param("userId") String userId, @Param("count") int count);
+
     // OpenAPI 호출에 따른 점수를 누적한다.
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""

@@ -9,12 +9,30 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 
 @Repository
 public interface PetInputLogRepository extends JpaRepository<PetInputLog, Long> {
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query(value = """
+        INSERT IGNORE INTO pet_input_logs
+            (event_id, input_count, input_time, school_id, device_id, user_id, student_number)
+        VALUES
+            (:eventId, :inputCount, :inputTime, :schoolId, :deviceId, :userId, :studentNumber)
+        """, nativeQuery = true)
+    int insertIfAbsent(@Param("eventId") String eventId,
+                       @Param("inputCount") int inputCount,
+                       @Param("inputTime") LocalDateTime inputTime,
+                       @Param("schoolId") Long schoolId,
+                       @Param("deviceId") Long deviceId,
+                       @Param("userId") String userId,
+                       @Param("studentNumber") String studentNumber);
+
+    java.util.Optional<PetInputLog> findByDevice_DeviceIdAndEventId(Long deviceId, String eventId);
 
     List<PetInputLog> findTop50ByUserId_UserIdOrderByInputTimeDesc(String userId);
 

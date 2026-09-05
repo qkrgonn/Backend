@@ -8,6 +8,7 @@ import lombok.Data;
 
 @Data
 public class PetInputLogDto {
+    private String eventId;
     private String userId;
     private String studentNumber;
     private Long deviceId;
